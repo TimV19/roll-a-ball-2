@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2D Spel</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    canvas {
+        display: block;
+        margin: auto;
+        background-color: #f0f0f0;
+    }
+</style>
+</head>
+<body>
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+<script>
+    // Initialisatie van canvas
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Speler instellingen
+    const player = {
+        x: 50,
+        y: canvas.height / 2,
+        size: 20,
+        speed: 5
+    };
+
+    // Doel instellingen
+    const goal = {
+        x: 0,
+        y: 0,
+        size: 50
+    };
+
+    // Start het spel
+    reset();
+
+    // Tekenen van de speler
+    function drawPlayer() {
+        ctx.fillStyle = 'red';
+        ctx.beginPath();
+        ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // Tekenen van de goal
+    function drawGoal() {
+        ctx.fillStyle = 'green';
+        ctx.fillRect(goal.x - goal.size / 2, goal.y - goal.size / 2, goal.size, goal.size);
+    }
+
+    // Spel loop
+    function gameLoop() {
+        // Wis canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Beweging van de speler
+        if (keys.ArrowUp && player.y > 0) {
+            player.y -= player.speed;
+        }
+        if (keys.ArrowDown && player.y < canvas.height) {
+            player.y += player.speed;
+        }
+        if (keys.ArrowLeft && player.x > 0) {
+            player.x -= player.speed;
+        }
+        if (keys.ArrowRight && player.x < canvas.width) {
+            player.x += player.speed;
+        }
+
+        // Tekenen van speler en goal
+        drawPlayer();
+        drawGoal();
+
+        // Controleer of de speler de goal heeft bereikt
+        if (player.x + player.size > goal.x - goal.size / 2 &&
+            player.x - player.size < goal.x + goal.size / 2 &&
+            player.y + player.size > goal.y - goal.size / 2 &&
+            player.y - player.size < goal.y + goal.size / 2) {
+            alert("Gewonnen!");
+            reset();
+        }
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    // Herstart het spel
+    function reset() {
+        player.x = 50;
+        player.y = canvas.height / 2;
+        
+        // Genereer willekeurige positie voor de goal
+        goal.x = Math.floor(Math.random() * (canvas.width - 100)) + 50;
+        goal.y = Math.floor(Math.random() * (canvas.height - 100)) + 50;
+    }
+
+    // Toetsenbordbediening
+    const keys = {};
+    document.addEventListener('keydown', event => {
+        keys[event.key] = true;
+    });
+    document.addEventListener('keyup', event => {
+        keys[event.key] = false;
+    });
+
+    // Start het spel
+    gameLoop();
+</script>
+</body>
+</html>
